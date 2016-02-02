@@ -1,0 +1,25 @@
+{
+  "name": "nand2tetris",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uiureo/nand2tetris.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uiureo/nand2tetris/issues"
+  },
+  "homepage": "https://github.com/uiureo/nand2tetris#readme",
+  "devDependencies": {
+    "ava": "^0.9.0",
+    "glob": "^6.0.4"
+  }
+}
