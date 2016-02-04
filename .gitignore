@@ -39,3 +39,4 @@ node_modules
 *.out
 *.cmp
 *.tst
+*.hack
