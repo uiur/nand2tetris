@@ -1,0 +1,44 @@
+CHIP CPU {
+  IN inM[16], instruction[16], reset;
+  OUT outM[16], writeM, addressM[15], pc[15];
+
+  PARTS:
+  // Decoder
+  And(a=instruction[15], b=instruction[14], out=inst15and14);
+  And(a=inst15and14, b=instruction[13], out=isC);
+
+  Not(in=instruction[15], out=isA);
+
+  And(a=isC, b=instruction[5], out=cLoadA);
+  Or(a=isA, b=cLoadA, out=loadA);
+
+  And(a=isC, b=instruction[4], out=loadD);
+  And(a=isC, b=instruction[3], out=writeM);
+
+  And(a=isC, b=instruction[2], out=jlt);
+  And(a=isC, b=instruction[1], out=jeq);
+  And(a=isC, b=instruction[0], out=jgt);
+
+  Mux16(a=outALU, b=instruction, sel=isA, out=ain);
+  ARegister(in=ain, load=loadA, out=a);
+  And16(a=true, b=a, out[0..14]=addressM);
+
+  DRegister(in=outALU, load=loadD, out=d);
+
+  Mux16(a=a, b=inM, sel=instruction[12], out=aorm);
+
+  ALU(x=d, y=aorm, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outALU, zr=outIsZero, ng=outIsNegative);
+  And16(a=true, b=outALU, out=outM);
+
+  Nor(a=outIsZero, b=outIsNegative, out=outIsPositive);
+
+  And(a=jgt, b=outIsPositive, out=jumpPositive);
+  And(a=jeq, b=outIsZero, out=jumpZero);
+
+  And(a=jlt, b=outIsNegative, out=jumpNegative);
+  Or(a=jumpPositive, b=jumpZero, out=positiveOrZero);
+  Or(a=positiveOrZero, b=jumpNegative, out=loadPC);
+
+  Not(in=loadPC, out=inc);
+  PC(in=a, load=loadPC, inc=inc, reset=reset, out[0..14]=pc, out[15]=false);
+}
